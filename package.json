@@ -15,5 +15,8 @@
   "dependencies": {
     "axios": "^0.21.1",
     "xregexp": "4.4.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.17.0"
   }
 }
