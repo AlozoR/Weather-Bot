@@ -76,13 +76,15 @@ rl.on('line', reply => {
       console.log(chalk.yellow('Querying the weather api...'));
       weather(cb.entities.city).then(data => {
         displayWeather(data, cb.entities.time);
-      }).then(() => rl.prompt());
+      }).catch(error => console.log(error))
+        .then(() => rl.prompt());
       break;
     case 'Current weather':
       console.log(chalk.yellow('Querying the weather api...'));
       weather(cb.entities.city).then(data => {
         displayWeather(data);
-      }).then(() => rl.prompt());
+      }).catch(error => console.log(error))
+        .then(() => rl.prompt());
       break;
     case 'Check weather':
       console.log(chalk.yellow('Querying the weather api...'));
@@ -118,7 +120,8 @@ rl.on('line', reply => {
             console.log(`No, it ${verb} ${chalk.keyword(colors.tempColors[tempString])(tempString)}, with a temperature of ${temp} °C.`);
           }
         }
-      }).then(() => rl.prompt());
+      }).catch(error => console.log(error))
+        .then(() => rl.prompt());
       break;
     default:
       console.log('Not supported');
