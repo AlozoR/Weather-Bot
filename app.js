@@ -42,6 +42,22 @@ const getTempKeyword = temp => {
         temp >= 25 && temp < 35 ? 'hot' : 'very hot';
 };
 
+const displayWeatherInXDays = (data, number = 0) => {
+  const index = number * 8;
+  const verb = 'will be';
+  const country = countries.getName(data.city.country, 'en');
+  console.log('The weather in'
+      + chalk.keyword('purple')(` ${data.city.name}, ${country} `)
+      + 'in ' + number + ' days' + ':\n');
+  const weatherData = data.list[index];
+  const desc = weatherData.weather[0].description;
+  console.log(`The weather ${verb} ${chalk.keyword(getWeatherColor(desc))(desc)}.`);
+  const temp = (Math.round(weatherData.main.temp - 273.15));
+  const tempString = getTempKeyword(temp);
+  console.log(`It ${verb} ${chalk.keyword(colors.tempColors[tempString])(tempString)}, with a temperature of ${temp} °C.`);
+  console.log(`The wind ${verb} blowing at ${Math.round(weatherData.wind.speed)} kph.\n`);
+}
+
 const displayWeather = (data, time = 'today') => {
   const index = getIndex(time);
   const verb = index === 0 ? 'is' : 'will be';
@@ -123,6 +139,18 @@ rl.on('line', reply => {
       }).catch(error => console.log(error))
         .then(() => rl.prompt());
       break;
+    case 'Weather in x days':
+        if (cb.entities.number > 5) {
+          console.log("We can't predict this far, choose in less than 5 days");
+        }
+        else {
+          console.log(chalk.yellow('Querying the weather api...'));
+          weather(cb.entities.city).then(data => {
+            displayWeatherInXDays(data, cb.entities.number);
+          }).catch(error => console.log(error))
+              .then(() => rl.prompt());
+        }
+        break;
     default:
       console.log('Not supported');
       rl.prompt();
