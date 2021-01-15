@@ -5,7 +5,7 @@ const patternDict = [{
   pattern: '\\b(bye|exit)\\b',
   intent: 'Exit'
 },{
-  pattern: 'weather.* in (?<number>[ 0-9]) (days|day) in (?<city>[ a-z]+)$',
+  pattern: 'weather.* in (?<city>[ a-z]+) in (?<number>[0-9]) (days|day)$',
   intent: 'Weather in x days'
 }, {
   pattern: '\\bweather.*\\sin\\s\\b(?<city>[ a-z]+)\\s\\b(?<time>the day after tomorrow)$',
@@ -19,7 +19,6 @@ const patternDict = [{
 }, {
   pattern: '(?:is it|will it be)\\s\\b(?<temp>hot|warm|cold)?(?<weather>rainy|sunny|snowy)?\\s\\bin\\s(?<city>[ a-z]+)\\s\\b(?<time>tomorrow|today)$',
   intent: 'Check weather'
-}
-];
+}];
 
 module.exports = patternDict;

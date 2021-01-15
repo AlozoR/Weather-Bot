@@ -44,28 +44,27 @@ const getTempKeyword = temp => {
 
 const displayWeatherInXDays = (data, number = 0) => {
   const index = number * 8;
-  const verb = 'will be';
   const country = countries.getName(data.city.country, 'en');
   console.log('The weather in'
-      + chalk.keyword('purple')(` ${data.city.name}, ${country} `)
-      + 'in ' + number + ' days' + ':\n');
+    + chalk.keyword('purple')(` ${data.city.name}, ${country} `)
+    + 'in ' + number + ' days' + ':\n');
+  const verb = 'will be';
   const weatherData = data.list[index];
-  const desc = weatherData.weather[0].description;
-  console.log(`The weather ${verb} ${chalk.keyword(getWeatherColor(desc))(desc)}.`);
-  const temp = (Math.round(weatherData.main.temp - 273.15));
-  const tempString = getTempKeyword(temp);
-  console.log(`It ${verb} ${chalk.keyword(colors.tempColors[tempString])(tempString)}, with a temperature of ${temp} °C.`);
-  console.log(`The wind ${verb} blowing at ${Math.round(weatherData.wind.speed)} kph.\n`);
-}
+  displayWeatherData(weatherData, verb);
+};
 
 const displayWeather = (data, time = 'today') => {
   const index = getIndex(time);
-  const verb = index === 0 ? 'is' : 'will be';
   const country = countries.getName(data.city.country, 'en');
   console.log('The weather in'
     + chalk.keyword('purple')(` ${data.city.name}, ${country} `)
     + time + ':\n');
+  const verb = index === 0 ? 'is' : 'will be';
   const weatherData = data.list[index];
+  displayWeatherData(weatherData, verb);
+};
+
+const displayWeatherData = (weatherData, verb) => {
   const desc = weatherData.weather[0].description;
   console.log(`The weather ${verb} ${chalk.keyword(getWeatherColor(desc))(desc)}.`);
   const temp = (Math.round(weatherData.main.temp - 273.15));
@@ -92,14 +91,14 @@ rl.on('line', reply => {
       console.log(chalk.yellow('Querying the weather api...'));
       weather(cb.entities.city).then(data => {
         displayWeather(data, cb.entities.time);
-      }).catch(error => console.log(error))
+      }).catch(() => console.log(chalk.red('Unknown city!')))
         .then(() => rl.prompt());
       break;
     case 'Current weather':
       console.log(chalk.yellow('Querying the weather api...'));
       weather(cb.entities.city).then(data => {
         displayWeather(data);
-      }).catch(error => console.log(error))
+      }).catch(() => console.log(chalk.red('Unknown city!')))
         .then(() => rl.prompt());
       break;
     case 'Check weather':
@@ -136,21 +135,20 @@ rl.on('line', reply => {
             console.log(`No, it ${verb} ${chalk.keyword(colors.tempColors[tempString])(tempString)}, with a temperature of ${temp} °C.`);
           }
         }
-      }).catch(error => console.log(error))
+      }).catch(() => console.log(chalk.red('Unknown city!')))
         .then(() => rl.prompt());
       break;
     case 'Weather in x days':
-        if (cb.entities.number > 5) {
-          console.log("We can't predict this far, choose in less than 5 days");
-        }
-        else {
-          console.log(chalk.yellow('Querying the weather api...'));
-          weather(cb.entities.city).then(data => {
-            displayWeatherInXDays(data, cb.entities.number);
-          }).catch(error => console.log(error))
-              .then(() => rl.prompt());
-        }
-        break;
+      if (cb.entities.number > 5) {
+        console.log('We can\'t predict this far, choose in less than 5 days');
+      } else {
+        console.log(chalk.yellow('Querying the weather api...'));
+        weather(cb.entities.city).then(data => {
+          displayWeatherInXDays(data, cb.entities.number);
+        }).catch(() => console.log(chalk.red('Unknown city!')))
+          .then(() => rl.prompt());
+      }
+      break;
     default:
       console.log('Not supported');
       rl.prompt();
