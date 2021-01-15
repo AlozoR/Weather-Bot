@@ -108,7 +108,7 @@ rl.on('line', reply => {
         const verb = index === 0 ? 'is' : 'will be';
         const weatherData = data.list[index];
         if (cb.entities.weather) {
-          let toCheck = '';
+          let toCheck = [];
           switch (cb.entities.weather) {
           case 'rainy':
             toCheck = ['rain'];
